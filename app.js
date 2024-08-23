@@ -62,6 +62,12 @@ app.put('/campgrounds/:id', async (req, res) =>{
     const updatedCampground = await Campground.findByIdAndUpdate(id, req.body.campground);
     res.redirect(`/campgrounds/${updatedCampground.id}`);
 });
+
+app.delete('/campgrounds/:id', async (req, res) => {
+    const {id} = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect('/campgrounds');
+});
 // Host server on local machine's 3000 port.
 app.listen(3000, () => {
     console.log("Listening on port 3000!")
