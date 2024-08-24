@@ -4,7 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const Campground = require('./models/campground')
 const methodOverride = require('method-override')
-
+const ejsMate = require('ejs-mate');
 // Connect to mongo database
 mongoose.connect('mongodb://127.0.0.1:27017/find-camp', {
         useNewUrlParser: true,
@@ -19,7 +19,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/find-camp', {
 
 // Set views templating path
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
+
+// Use ejsmate
+app.engine('ejs', ejsMate);
 
 // Use URL Encoded to read and parse forms passed to the req body.
 app.use(express.urlencoded({extended: true}));
