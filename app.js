@@ -51,6 +51,7 @@ app.post('/campgrounds', async (req, res) =>{
 app.get('/campgrounds/:id', async(req, res) =>{
     const {id} = req.params;
     const campground = await Campground.findById(id);
+    console.log(campground);
     res.render('campgrounds/show', {campground});
 });
 // PUT Route for updating individual campgrounds 
