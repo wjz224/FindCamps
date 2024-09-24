@@ -5,6 +5,9 @@ const mongoose = require('mongoose')
 const Campground = require('./models/campground')
 const methodOverride = require('method-override')
 const ejsMate = require('ejs-mate');
+const catchAsync = require('./utils/catchAsync');
+const ExpressError = require('./utils/ExpressError');
+const {campgroundSchema} = require('./schemas.js');
 // Connect to mongo database
 mongoose.connect('mongodb://127.0.0.1:27017/find-camp', {
         useNewUrlParser: true,
@@ -29,48 +32,69 @@ app.use(express.urlencoded({extended: true}));
 // Use method override to use routes such as PATCH, PUT, DELETE, ETC.
 app.use(methodOverride('_method'))
 
+
+const validateCampground = (req, res, next) =>{
+    const {error} = campgroundSchema.validate(req.body);
+    if(error){
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    }
+    else{
+        next();
+    }
+}
 app.get('/', (req, res) =>{
     res.render("home");
 })
 // GET Route for all campgrounds
-app.get('/campgrounds', async (req, res) =>{
+app.get('/campgrounds', catchAsync(async (req, res) =>{
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', {campgrounds});
-});
+}));
 // GET Route for making new campgrounds form
 app.get('/campgrounds/new', (req, res) =>{
     res.render('campgrounds/new');
 });
 // POST Route for posting new campgrounds
-app.post('/campgrounds', async (req, res) =>{
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =>{
     const newCampground = new Campground(req.body.campground);
     await newCampground.save();
-    res.redirect(`/campgrounds/${newCampground.id}`);
-});
+    res.redirect(`/campgrounds/${newCampground._id}`);
+}));
 // Get Route for showing details of individual camps
-app.get('/campgrounds/:id', async(req, res) =>{
-    const {id} = req.params;
-    const campground = await Campground.findById(id);
-    console.log(campground);
+app.get('/campgrounds/:id', catchAsync(async(req, res) =>{
+    const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', {campground});
-});
+}));
 // PUT Route for updating individual campgrounds 
-app.get('/campgrounds/:id/edit', async (req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
     const {id} = req.params;
     const editCampground = await Campground.findById(id);
     res.render('campgrounds/edit', {editCampground});
-});
+}));
 
-app.put('/campgrounds/:id', async (req, res) =>{
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) =>{
     const{id} = req.params;
     const updatedCampground = await Campground.findByIdAndUpdate(id, req.body.campground);
     res.redirect(`/campgrounds/${updatedCampground.id}`);
-});
+}));
 
-app.delete('/campgrounds/:id', async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const {id} = req.params;
+    console.log('Deleting Campground with ID:', id); // Log the ID being used
+    console.log(req.params);
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+}));
+app.all(/(.*)/, (req, res, next) => {
+    next(new ExpressError('Page Not Found', 404));
+}) 
+app.use((err,req,res,next) => {
+    const {statusCode = 500} = err;
+    if(!err.message){
+        err.message = 'Oh no something went wrong!';
+    }
+    res.status(statusCode).render('error', {err});
 });
 // Host server on local machine's 3000 port.
 app.listen(3000, () => {
