@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="/stylesheets/stars.css">
 <div class="row">
         <div class="col-6">
+          <div id='map' style='width: 400px; height: 300px;'></div>
           <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <% campground.images.forEach((img, i) => {  %>
@@ -74,7 +75,7 @@
     <% for(let review of campground.reviews) { %>
       <div class="card mb-3">
         <div class="card-body">
-          <h5 class = "card-title">Rating: <%=review.author.username %></h5>
+          <h5 class = "card-title">By: <%=review.author.username %></h5>
           <p class="starability-result" data-rating="<%=review.rating%>">
             Rated: 3 stars
           </p>
@@ -90,3 +91,9 @@
    </div>
 </div>
 <a href="/campgrounds">All Campgrounds</a>
+
+<script>
+  const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+  const campground = <%-JSON.stringify(campground)%>;
+</script>
+<script src = "/javascripts/showPageMap.js"></script>

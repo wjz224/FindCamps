@@ -9,6 +9,8 @@
   "author": "Wilson Zheng",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.16.1",
+    "@maptiler/sdk": "^2.3.0",
     "buffer-crc32": "^1.0.0",
     "cloudinary": "^1.41.3",
     "connect-flash": "^0.1.1",
