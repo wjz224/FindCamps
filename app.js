@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const methodOverride = require('method-override')
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const ExpressError = require('./utils/ExpressError');
 const flash = require('connect-flash');
 const campgroundRoutes = require('./routes/campgrounds');
@@ -17,8 +18,10 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize')
-// Connect to mongo database
-mongoose.connect('mongodb://127.0.0.1:27017/find-camp', {
+const helmet = require('helmet');
+const dbUrl = process.env.DB_URL;
+
+mongoose.connect(dbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -43,12 +46,72 @@ app.use(methodOverride('_method'))
 // Use static method to serve our public directory for static images and etc
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
+app.use(helmet());
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://kit-free.fontawesome.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/daxndrg1b/",
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+store.on("error", function (e){
+    console.log("SESSION STORE ERROR", e)
+})
 const sessionConfig = {
+    store,
+    name: "session",
     secret:"thisshouldbeabettersecret",
     resave: false,
     saveUninitialized: true,
     cookie:{
         httpOnly: true,
+        //secure: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         maxAge: 1000 * 60 * 60 * 24 * 7,
     }
