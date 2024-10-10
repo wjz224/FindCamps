@@ -80,7 +80,7 @@
             Rated: 3 stars
           </p>
           <p class = "card-text">Review: <%=review.body%></p>
-          <% if(currentUser && campground.author.equals(currentUser)) {%>
+          <% if(currentUser && review.author.equals(currentUser)) {%>
           <form action="/campgrounds/<%=campground.id%>/reviews/<%= review._id %>?_method=DELETE" method = "POST">
             <button class ="btn btn-sm btn-danger">Delete</button>
           </form>
