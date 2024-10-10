@@ -16,7 +16,7 @@ const reviewRoutes = require('./routes/reviews')
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-
+const mongoSanitize = require('express-mongo-sanitize')
 // Connect to mongo database
 mongoose.connect('mongodb://127.0.0.1:27017/find-camp', {
         useNewUrlParser: true,
@@ -42,7 +42,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'))
 // Use static method to serve our public directory for static images and etc
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(mongoSanitize());
 const sessionConfig = {
     secret:"thisshouldbeabettersecret",
     resave: false,
