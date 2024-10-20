@@ -2,6 +2,8 @@
 
 This is a full-stack web application as part of Colt Steele's Udemy Web Development Bootcamp, providing users with a platform to upload and review campgrounds.
 
+![FindCamp Demo](FindCampSample.gif)
+
 ## Functionalities
 
 - **CRUD Functionality:** Managed campgrounds, comments, and reviews with full Create, Read, Update, and Delete (CRUD) capabilities using **Express** and **EJS** templates..
@@ -16,7 +18,7 @@ This is a full-stack web application as part of Colt Steele's Udemy Web Developm
 - **Deployment:** Deployed the web application using **Render** for seamless and reliable hosting.
 
 ## Diagrams
-### MongoDB Schema
+### MongoDB Schema (Created using Luna Modeler)
 ![MongoDB Schema](diagrams/MongoDBSchemaVisual.png)
 
 ### Technologies Used
