@@ -6,7 +6,7 @@ This is a full-stack web application as part of Colt Steele's Udemy Web Developm
 
 <https://findcamp-eywj.onrender.com/campgrounds>
 
-## Demo
+## Demo (Created using LICEcap)
 ![FindCamp Demo](FindCampSample.gif)
 
 ## Functionalities
