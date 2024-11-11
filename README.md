@@ -2,7 +2,8 @@
 
 This is a full-stack web application as part of Colt Steele's Udemy Web Development Bootcamp, providing users with a platform to upload and review campgrounds.
 
-## Website Link (Hosted using Render) (Website takes a while to load if there haven't been any active users)
+## Website Link (Hosted using Render) 
+#(Website takes a while to load if there haven't been any active users)
 
 <https://findcamp-eywj.onrender.com/campgrounds>
 
