@@ -1,4 +1,4 @@
-## Full-Stack Campsite Review Web Application (Aug 2024 – Oct 2024)
+## Full-Stack Campsite Review Web Application (Aug 2024 – November 2024)
 
 This is a full-stack web application as part of Colt Steele's Udemy Web Development Bootcamp, providing users with a platform to upload and review campgrounds.
 
